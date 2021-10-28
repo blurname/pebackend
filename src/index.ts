@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client'
 import {user} from './User'
 import {canvas} from './Canvas'
 import { Server } from 'socket.io'
+import {image} from './Images'
 const http = Http()
 const server = http.server()
 const io = new Server(server, {
@@ -12,6 +13,10 @@ const io = new Server(server, {
 http.use(cors())
 http.route('/user').use(user)
 http.route('/canvas').use(canvas)
+http.route('/image').use(image)
+http.route('/').use((req) => {
+	return Response.text('ok')
+})
 
 //io.on('connection', (socket) => {
   //console.log(`a user is connected${socket.id}`)
