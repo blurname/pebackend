@@ -27,9 +27,18 @@ model user {
 }
 
 model spirit {
-  id               Int    @id @default(autoincrement())
+  id               Int     @id @default(autoincrement())
   canvas_spirit_id Int?
   canvas_id        Int?
   spirit_type      Int
-  model            String @db.VarChar(255)
+  model            String  @db.VarChar(255)
+  element          String? @db.VarChar(255)
+  unique_props     String? @db.VarChar(255)
+}
+
+model element {
+  id    Int     @id @default(autoincrement()) @db.UnsignedInt
+  name  String? @db.VarChar(255)
+  type  Int?
+  owner Int     @db.UnsignedInt
 }
