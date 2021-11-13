@@ -41,6 +41,26 @@ canvas
   })
 
 canvas
+  .post('/update_back/?<canvasid:int>&<spirittype:int>&<canvas_spirit_id:int>$<element:string>')
+  .use(async (req) => {
+    let model = useRequestInfo().body
+    const res = await pc.spirit.updateMany({
+			where:{
+				canvas_id:req.query.canvasid,
+				canvas_spirit_id:req.query.canvas_spirit_id
+			},
+      data: {
+        canvas_id: req.query.canvasid,
+        canvas_spirit_id: req.query.canvas_spirit_id,
+        spirit_type: req.query.spirittype,
+				element:req.query.element,
+        model: JSON.stringify(model),
+      },
+    })
+    console.log(res)
+    return Response.text('ok')
+  })
+canvas
   .post('/update_model/?<canvasid:int>&<canvas_spirit_id:int>')
   .use(async (req) => {
     let model = useRequestInfo().body
