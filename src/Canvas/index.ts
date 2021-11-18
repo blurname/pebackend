@@ -55,6 +55,7 @@ canvas
         spirit_type: req.query.spirittype,
 				element:req.query.element,
         model: JSON.stringify(model),
+				unique_props:null
       },
     })
     console.log(res)
