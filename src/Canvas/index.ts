@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { Router, Response, useRequestInfo } from 'farrow-http'
 const pc = new PrismaClient()
 export const canvas = Router()
