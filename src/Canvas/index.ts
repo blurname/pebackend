@@ -99,8 +99,17 @@ canvas
     return Response.text('ok')
   })
 
-canvas.get('/get/?<ownerid:int>').use(async () => {
-  let canvases = await pc.canvas.findMany()
+canvas.get('/get/?<ownerid:int>').use(async (req) => {
+	console.log('req.query.ownerid:', req.query.ownerid)
+  let canvases = await pc.canvas.findMany(
+		{
+			where:{
+				owner_id:req.query.ownerid
+			}
+		}
+	)
+	console.log('aslkdfjlsakdfjl;k')
+	console.log('canvas:', canvases)
   return Response.json(JSON.stringify(canvases))
 })
 

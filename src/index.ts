@@ -13,12 +13,12 @@ const io = new Server(server, {
 })
 //const io = new Server(server)
 http.use(cors())
-//http.route('/user').use(user)
-//http.route('/canvas').use(canvas)
-//http.route('/image').use(image)
-//http.route('/').use((req) => {
-	//return Response.text('ok')
-//})
+http.route('/user').use(user)
+http.route('/canvas').use(canvas)
+http.route('/image').use(image)
+http.route('/').use((req) => {
+	return Response.text('ok')
+})
 
 const socketCanvas = new SocketCanvas(io)
 socketCanvas.onConnection()
@@ -27,4 +27,4 @@ server.listen(30000, () => {
 	console.log('server listening')
 })
 
-//http.listen(30001)
+http.listen(30001)
