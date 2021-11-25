@@ -42,3 +42,10 @@ model element {
   type  Int?
   owner Int     @db.UnsignedInt
 }
+
+model collaboration {
+  id              Int  @id @default(autoincrement())
+  canvas_id       Int
+  owner_id        Int?
+  collaborator_id Int?
+}

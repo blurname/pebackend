@@ -5,15 +5,15 @@ type User= {
 export class Canvas{
 	id:number
 	socket:Socket
-	users:User[]
+	users:Map<number,User>
 	constructor(id:number,socket:Socket){
 		this.id = id
-		this.users = []
+		this.users = new Map()
 		this.socket = socket
 		this.socket.join(this.id.toString())
 	}
 	joinUser(user:User){
-		this.users.push(user)
+		this.users.set(user.id,user)
 		console.log(this.users)
 	}
 }

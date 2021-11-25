@@ -12,6 +12,8 @@ export class SocketCanvas {
     this.io.on('connection', (socket) => {
       //this.create(socket)
       this.join(socket)
+      this.controll(socket)
+			this.exit(socket)
     })
   }
   create(socket: Socket) {
@@ -24,15 +26,18 @@ export class SocketCanvas {
     socket.on('join', (canvasId: number, userId: number) => {
       const canvas = this.canvasMap.get(canvasId)
       if (canvas === undefined) {
-        const temp = new Canvas(canvasId, socket)
-        temp.joinUser({ id: userId })
-          console.log(`user: ${userId} Join the ${canvasId}`)
-        this.canvasMap.set(canvasId, temp)
+        const canvas = new Canvas(canvasId, socket)
+        canvas.joinUser({ id: userId })
+        socket.emit('newJoin', JSON.stringify(canvas.users))
+        console.log(`user: ${userId} Join the ${canvasId}`)
+        this.canvasMap.set(canvasId, canvas)
       } else {
         const canvas = this.canvasMap.get(canvasId)
-        const userIsExist = canvas.users.filter((user) => user.id === userId)
-        if (userIsExist.length === 0) {
+        //const userIsExist = canvas.users.filter((user) => user.id === userId)
+        //
+        if (!canvas.users.get(userId)) {
           canvas.joinUser({ id: userId })
+          socket.emit('newJoin', JSON.stringify(canvas.users))
           console.log(`user: ${userId} Join the ${canvasId}`)
         } else {
           console.log(`user: ${userId} has Join the ${canvasId}`)
@@ -40,7 +45,18 @@ export class SocketCanvas {
       }
     })
   }
+  exit(socket: Socket) {
+    socket.on('preExit', (canvasId: number, userId: number) => {
+      console.log('preExit')
+      const res = this.canvasMap.get(canvasId).users.delete(userId)
+      console.log('res:', res)
+      socket.emit('sureExit', 't')
+      //else socket.emit('sureExit', 'f')
+    })
+  }
+  controll(socket: Socket) {
+    socket.on('controll', (userId: number, selectNum: number) => {
+      console.log(`user:${userId} is controlling the number ${selectNum}`)
+    })
+  }
 }
-//const create = (canvasId: number, socket: Socket, canvasMap: Map<number,Canvas>) => {
-//canvasMap.set(canvasId,)
-//}

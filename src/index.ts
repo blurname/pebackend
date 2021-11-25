@@ -6,16 +6,20 @@ import {canvas} from './Canvas'
 import { Server, Socket } from 'socket.io'
 import {image} from './Images'
 import {SocketCanvas} from './socket'
+import {collaboration} from './Collaboration'
+
 const http = Http()
 const server = http.server()
 const io = new Server(server, {
 	cors: { origin: 'http://localhost:3000', methods: ['GET', 'POST'] },
+	transports:['websocket']
 })
 //const io = new Server(server)
 http.use(cors())
 http.route('/user').use(user)
 http.route('/canvas').use(canvas)
 http.route('/image').use(image)
+http.route('/collaboration').use(collaboration)
 http.route('/').use((req) => {
 	return Response.text('ok')
 })

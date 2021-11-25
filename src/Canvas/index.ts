@@ -1,6 +1,5 @@
-import { PrismaClient } from '@prisma/client'
 import { Router, Response, useRequestInfo } from 'farrow-http'
-const pc = new PrismaClient()
+import {pc} from '../db'
 export const canvas = Router()
 
 canvas.post('/create').use(async (req) => {

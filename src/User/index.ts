@@ -1,5 +1,5 @@
 import { Router, Response } from 'farrow-http'
-import { prisma } from '../db'
+import {  pc } from '../db'
 
 export const user = Router()
 
@@ -9,7 +9,7 @@ type User = {
 }
 
 const signUp = async (user: User) => {
-  const isExisted = await prisma.user.findFirst({
+  const isExisted = await pc.user.findFirst({
     where: {
       name: user.name,
     },
@@ -17,7 +17,7 @@ const signUp = async (user: User) => {
 	if(isExisted !== null){
 		return null
 	}
-  const signedUser = await prisma.user.create({
+  const signedUser = await pc.user.create({
 		data:{
 			name:user.name,
 			password:user.password
@@ -27,7 +27,7 @@ const signUp = async (user: User) => {
 }
 const signIn = async (user: User) => {
 	console.log('signin:',user)
-  const signedUser = await prisma.user.findFirst({
+  const signedUser = await pc.user.findFirst({
     where: {
       name: user.name,
       password: user.password,
