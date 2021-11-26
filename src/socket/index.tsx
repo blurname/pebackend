@@ -11,9 +11,9 @@ export class SocketCanvas {
   onConnection() {
     this.io.on('connection', (socket) => {
       //this.create(socket)
-      this.join(socket)
+			this.join(socket)
       this.controll(socket)
-			this.exit(socket)
+      this.exit(socket)
     })
   }
   create(socket: Socket) {
@@ -23,40 +23,48 @@ export class SocketCanvas {
     })
   }
   join(socket: Socket) {
-    socket.on('join', (canvasId: number, userId: number) => {
-      const canvas = this.canvasMap.get(canvasId)
-      if (canvas === undefined) {
-        const canvas = new Canvas(canvasId, socket)
-        canvas.joinUser({ id: userId })
-        socket.emit('newJoin', JSON.stringify(canvas.users))
+    socket.on('server-join', (canvasId: number, userId: number) => {
+      let can = this.canvasMap.get(canvasId)
+      if (!can) {
+        const temp = new Canvas(canvasId, socket)
+        temp.joinUser({ id: userId })
         console.log(`user: ${userId} Join the ${canvasId}`)
-        this.canvasMap.set(canvasId, canvas)
+        this.canvasMap.set(canvasId, temp)
+        this.io.to(canvasId+'').emit('client-users', mapToJson(temp.users))
       } else {
-        const canvas = this.canvasMap.get(canvasId)
-        //const userIsExist = canvas.users.filter((user) => user.id === userId)
-        //
-        if (!canvas.users.get(userId)) {
-          canvas.joinUser({ id: userId })
-          socket.emit('newJoin', JSON.stringify(canvas.users))
+        if (!can.users.get(userId)) {
+          can.joinUser({ id: userId })
+          //socket.emit('newJoin', JSON.stringify(can.users))
           console.log(`user: ${userId} Join the ${canvasId}`)
         } else {
           console.log(`user: ${userId} has Join the ${canvasId}`)
         }
+				socket.join(canvasId+'')
+        this.io.to(canvasId+'').emit('client-users', mapToJson(can.users))
       }
+      console.log('sdfj')
     })
   }
   exit(socket: Socket) {
     socket.on('preExit', (canvasId: number, userId: number) => {
-      console.log('preExit')
-      const res = this.canvasMap.get(canvasId).users.delete(userId)
-      console.log('res:', res)
-      socket.emit('sureExit', 't')
-      //else socket.emit('sureExit', 'f')
+      //console.log('preExit',canvasId,userId)
+			//console.log(this.canvasMap)
+
+			const can = this.canvasMap.get(canvasId)
+			can.users.delete(userId)
+
+			//socket.emit('sureExit', 't')
+			socket.to(canvasId+'').emit('client-users',mapToJson(can.users))
+			//else socket.emit('sureExit', 'f')
     })
   }
   controll(socket: Socket) {
-    socket.on('controll', (userId: number, selectNum: number) => {
+    socket.on('server-controll', (canvasId:number,userId: number, selectNum: number) => {
       console.log(`user:${userId} is controlling the number ${selectNum}`)
+			socket.to(canvasId+'').emit('client-who-controll',userId,selectNum )
     })
   }
+}
+export const mapToJson = (map: Map<any, any>) => {
+  return JSON.stringify([...map])
 }
