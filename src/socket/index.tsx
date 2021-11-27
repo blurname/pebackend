@@ -15,6 +15,7 @@ export class SocketCanvas {
       this.controll(socket)
       this.exit(socket)
 			this.onMove(socket)
+			this.edit(socket)
     })
   }
   create(socket: Socket) {
@@ -78,6 +79,12 @@ export class SocketCanvas {
       },
     )
   }
+	edit(socket:Socket){
+	socket.on('server-editor', (canvasId:number,spiritId:number,from:any,to:any) => {
+		console.log('server-editor',spiritId,from,to)
+		socket.to(canvasId+'').emit('client-editor',spiritId,from,to)
+	})
+	}
 }
 export const mapToJson = (map: Map<any, any>) => {
   return JSON.stringify([...map])
