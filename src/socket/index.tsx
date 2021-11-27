@@ -11,9 +11,10 @@ export class SocketCanvas {
   onConnection() {
     this.io.on('connection', (socket) => {
       //this.create(socket)
-			this.join(socket)
+      this.join(socket)
       this.controll(socket)
       this.exit(socket)
+			this.onMove(socket)
     })
   }
   create(socket: Socket) {
@@ -30,7 +31,7 @@ export class SocketCanvas {
         temp.joinUser({ id: userId })
         console.log(`user: ${userId} Join the ${canvasId}`)
         this.canvasMap.set(canvasId, temp)
-        this.io.to(canvasId+'').emit('client-users', mapToJson(temp.users))
+        this.io.to(canvasId + '').emit('client-users', mapToJson(temp.users))
       } else {
         if (!can.users.get(userId)) {
           can.joinUser({ id: userId })
@@ -39,8 +40,8 @@ export class SocketCanvas {
         } else {
           console.log(`user: ${userId} has Join the ${canvasId}`)
         }
-				socket.join(canvasId+'')
-        this.io.to(canvasId+'').emit('client-users', mapToJson(can.users))
+        socket.join(canvasId + '')
+        this.io.to(canvasId + '').emit('client-users', mapToJson(can.users))
       }
       console.log('sdfj')
     })
@@ -48,23 +49,40 @@ export class SocketCanvas {
   exit(socket: Socket) {
     socket.on('preExit', (canvasId: number, userId: number) => {
       //console.log('preExit',canvasId,userId)
-			//console.log(this.canvasMap)
+      //console.log(this.canvasMap)
 
-			const can = this.canvasMap.get(canvasId)
-			can.users.delete(userId)
+      const can = this.canvasMap.get(canvasId)
+      can.users.delete(userId)
 
-			//socket.emit('sureExit', 't')
-			socket.to(canvasId+'').emit('client-users',mapToJson(can.users))
-			//else socket.emit('sureExit', 'f')
+      //socket.emit('sureExit', 't')
+      socket.to(canvasId + '').emit('client-users', mapToJson(can.users))
+      //else socket.emit('sureExit', 'f')
     })
   }
   controll(socket: Socket) {
-    socket.on('server-controll', (canvasId:number,userId: number, selectNum: number) => {
-      console.log(`user:${userId} is controlling the number ${selectNum}`)
-			socket.to(canvasId+'').emit('client-who-controll',userId,selectNum )
-    })
+    socket.on(
+      'server-controll',
+      (canvasId: number, userId: number, spiritId: number) => {
+        console.log(`user:${userId} is controlling the number ${spiritId}`)
+        socket.to(canvasId + '').emit('client-who-controll', userId, spiritId)
+      },
+    )
+  }
+  onMove(socket: Socket) {
+    socket.on(
+      'server-move',
+      (canvasId: number, spiritId: number, distance: Pos) => {
+			console.log('move')
+			console.log('move distance',distance)
+        socket.to(canvasId + '').emit('client-move', spiritId, distance)
+      },
+    )
   }
 }
 export const mapToJson = (map: Map<any, any>) => {
   return JSON.stringify([...map])
+}
+type Pos = {
+  left: number
+  top: number
 }
