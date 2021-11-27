@@ -14,8 +14,9 @@ export class SocketCanvas {
       this.join(socket)
       this.controll(socket)
       this.exit(socket)
-			this.onMove(socket)
-			this.edit(socket)
+      this.onMove(socket)
+      this.edit(socket)
+			this.onSpiritAdd(socket)
     })
   }
   create(socket: Socket) {
@@ -30,21 +31,21 @@ export class SocketCanvas {
       if (!can) {
         const temp = new Canvas(canvasId, socket)
         temp.joinUser({ id: userId })
-        console.log(`user: ${userId} Join the ${canvasId}`)
+        //console.log(`user: ${userId} Join the ${canvasId}`)
         this.canvasMap.set(canvasId, temp)
         this.io.to(canvasId + '').emit('client-users', mapToJson(temp.users))
       } else {
         if (!can.users.get(userId)) {
           can.joinUser({ id: userId })
           //socket.emit('newJoin', JSON.stringify(can.users))
-          console.log(`user: ${userId} Join the ${canvasId}`)
+          //console.log(`user: ${userId} Join the ${canvasId}`)
         } else {
-          console.log(`user: ${userId} has Join the ${canvasId}`)
+          //console.log(`user: ${userId} has Join the ${canvasId}`)
         }
         socket.join(canvasId + '')
         this.io.to(canvasId + '').emit('client-users', mapToJson(can.users))
       }
-      console.log('sdfj')
+      //console.log('sdfj')
     })
   }
   exit(socket: Socket) {
@@ -64,7 +65,7 @@ export class SocketCanvas {
     socket.on(
       'server-controll',
       (canvasId: number, userId: number, spiritId: number) => {
-        console.log(`user:${userId} is controlling the number ${spiritId}`)
+        //console.log(`user:${userId} is controlling the number ${spiritId}`)
         socket.to(canvasId + '').emit('client-who-controll', userId, spiritId)
       },
     )
@@ -73,18 +74,27 @@ export class SocketCanvas {
     socket.on(
       'server-move',
       (canvasId: number, spiritId: number, distance: Pos) => {
-			console.log('move')
-			console.log('move distance',distance)
+        //console.log('move')
+        //console.log('move distance', distance)
         socket.to(canvasId + '').emit('client-move', spiritId, distance)
       },
     )
   }
-	edit(socket:Socket){
-	socket.on('server-editor', (canvasId:number,spiritId:number,from:any,to:any) => {
-		console.log('server-editor',spiritId,from,to)
-		socket.to(canvasId+'').emit('client-editor',spiritId,from,to)
-	})
-	}
+  edit(socket: Socket) {
+    socket.on(
+      'server-editor',
+      (canvasId: number, spiritId: number, from: any, to: any) => {
+        //console.log('server-editor', spiritId, from, to)
+        socket.to(canvasId + '').emit('client-editor', spiritId, from, to)
+      },
+    )
+  }
+  onSpiritAdd(socket: Socket) {
+    socket.on('server-add', (canvasId: number,type:string, element: string, id: number) => {
+        console.log('server-add', element,id)
+      socket.to(canvasId + '').emit('client-add', type,element, id)
+    })
+  }
 }
 export const mapToJson = (map: Map<any, any>) => {
   return JSON.stringify([...map])
