@@ -1,0 +1,5 @@
+docker run --name pic -v /home/bl/docker-store/mysql/picture -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 -d mysql:8
+docker cp pe.sql pic:/etc
+mysql -u root -p 
+create database pe
+mysql -u username -p database_name < pe.sql
