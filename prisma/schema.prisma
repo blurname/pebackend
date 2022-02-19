@@ -49,3 +49,10 @@ model collaboration {
   owner_id        Int?
   collaborator_id Int?
 }
+
+model point {
+  id        Int  @id @default(autoincrement()) @db.UnsignedInt
+  left      Int
+  top       Int
+  spirit_id Int?
+}

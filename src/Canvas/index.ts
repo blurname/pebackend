@@ -1,5 +1,6 @@
 import { Router, Response, useRequestInfo } from 'farrow-http'
 import {pc} from '../db'
+import * as R  from 'ramda' 
 export const canvas = Router()
 
 canvas.post('/create').use(async (req) => {
@@ -39,22 +40,37 @@ canvas
     return Response.text('ok')
   })
 
+//type offset = {
+  //left:number
+  //top:number
+//}
 canvas
   .post('/addElementContainer/?<canvasid:int>&<spirittype:int>&<canvas_spirit_id:int>')
   .use(async (req) => {
-    let model = useRequestInfo().body
-    console.log('modellksajdflksjdf',model)
-    console.log(model.model)
-    console.log(model.element)
-    //const res = await pc.spirit.create({
-      //data: {
-        //canvas_id: req.query.canvasid,
-        //canvas_spirit_id: req.query.canvas_spirit_id,
-        //spirit_type: req.query.spirittype,
-        //model: JSON.stringify(model),
-      //},
-    //})
-    //console.log(res)
+    let payload = useRequestInfo().body
+    const posArray:number[] = JSON.parse(payload.element)
+    const offsets:number[][] = R.aperture(2,posArray)
+
+    const res = await pc.spirit.create({
+      data: {
+        canvas_id: req.query.canvasid,
+        canvas_spirit_id: req.query.canvas_spirit_id,
+        spirit_type: req.query.spirittype,
+        model: JSON.stringify(JSON.parse(payload.model)),
+      },
+    })
+    const spirit_id = res.id
+    offsets.forEach(async (offset) => {
+      const res = await pc.point.create({
+        data:{
+          top:offset[1],
+          left:offset[0],
+          spirit_id:spirit_id
+        }
+      })
+      console.log(res)
+    })
+
     return Response.text('ok')
   })
 
@@ -146,4 +162,14 @@ canvas.get('/get_is_having_spirits/?<canvas_id:int>').use(async (req) => {
 		}
 	})
 	return Response.json(count)
+})
+canvas.get('/get_point/?<spirit_id:int>').use(async (req)=>{
+  let points = await pc.point.findMany({
+    where:{
+      spirit_id:req.query.spirit_id
+    }
+  })
+  console.log({points})
+  return Response.json(points)
+
 })
