@@ -1,7 +1,15 @@
 import { Router, Response, useRequestInfo } from 'farrow-http'
 import {pc} from '../db'
-import * as R  from 'ramda' 
 export const canvas = Router()
+const group = (array:any[],count:number) => {
+  let index = 0
+  let newArr = []
+  while (index<array.length) {
+    newArr.push(array.slice(index,index+count))
+    index+=count
+  }
+  return newArr
+}
 
 canvas.post('/create').use(async (req) => {
   let ri = useRequestInfo()
@@ -49,7 +57,9 @@ canvas
   .use(async (req) => {
     let payload = useRequestInfo().body
     const posArray:number[] = JSON.parse(payload.element)
-    const offsets:number[][] = R.aperture(2,posArray)
+    console.log('pos',posArray)
+    const offsets = group(posArray,2)
+    console.log('afterPos',offsets)
 
     const res = await pc.spirit.create({
       data: {
