@@ -17,6 +17,7 @@ export class SocketCanvas {
       this.onMove(socket)
       this.edit(socket)
 			this.onSpiritAdd(socket)
+      this.onEmitMessage(socket)
     })
   }
   create(socket: Socket) {
@@ -93,6 +94,11 @@ export class SocketCanvas {
     socket.on('server-add', (canvasId: number,type:string, element: string, id: number) => {
         console.log('server-add', element,id)
       socket.to(canvasId + '').emit('client-add', type,element, id)
+    })
+  }
+  onEmitMessage(socket: Socket) {
+    socket.on('server-message', (canvasId: number,userName:string, message:string)=>{
+    socket.to(canvasId + '').emit('client-message',userName,message)
     })
   }
 }
