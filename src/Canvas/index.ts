@@ -47,6 +47,18 @@ canvas
     console.log(res)
     return Response.text('ok')
   })
+canvas
+  .post('/del/?<canvas_id:int>&<spirit_id:int>')
+  .use(async (req) => {
+    const res = await pc.spirit.deleteMany({
+      where:{
+        canvas_id: req.query.canvas_id,
+        canvas_spirit_id: req.query.spirit_id
+      } 
+    })
+    console.log('del res', res)
+    return Response.text('ok')
+  })
 
 //type offset = {
   //left:number
@@ -181,5 +193,4 @@ canvas.get('/get_point/?<spirit_id:int>').use(async (req)=>{
   })
   console.log({points})
   return Response.json(points)
-
 })
