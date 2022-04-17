@@ -9,11 +9,8 @@ image.get('/get_single/<image_name:string>').use((req) => {
   const imgUrl = req.params.image_name
   return Response.file(path.join(__dirname, '/../../public/images/', imgUrl))
 })
-image.post('/upload',{body:Unknown}).use((req) => {
-	//let reqInfo = useRequestInfo()
-  //let reqq = useReq()
+image.post('/upload/?<type:int>&<owner:int').use((req) => {
+  const {} = req.
   console.log('reqInfo:', req)
-  //console.log(reqInfo.headers)
-  //console.log(reqInfo.body)
   return Response.text('upload successfully')
 })
