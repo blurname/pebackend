@@ -19,7 +19,7 @@ export default {
     // whitelist: string[]，文件扩展名白名单
     whitelist: ['.jpg', '.jpeg', '.png'],
     // tmpdir: string，上传的文件临时存储路径
-    tmpdir: './',
+    tmpdir: './../public/images',
     // cleanTimeout: number，上传的文件在临时目录中多久之后自动删除，默认为 5 分钟
     cleanTimeout: 0,
   },
