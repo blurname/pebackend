@@ -18,6 +18,8 @@ export class SocketCanvas {
       this.edit(socket)
 			this.onSpiritAdd(socket)
       this.onEmitMessage(socket)
+      this.onAddPointContainer(socket)
+      this.onDelSpirit(socket)
     })
   }
   create(socket: Socket) {
@@ -100,6 +102,17 @@ export class SocketCanvas {
     socket.on('server-message', (canvasId: number,userName:string, message:string)=>{
     socket.to(canvasId + '').emit('client-message',userName,message)
     })
+  }
+  onAddPointContainer(socket: Socket){
+    socket.on('server-add-pointcontainer',(canvasId:number, id:number)=>{
+      socket.to(canvasId+'').emit('client-add-pointcontainer',id)
+    })
+  }
+  onDelSpirit(socket: Socket){
+    socket.on('server-del', (canvasId: number, id: number) => {
+      // console.log('server-del', id)
+    socket.to(canvasId + '').emit('client-del', id)
+  })
   }
 }
 export const mapToJson = (map: Map<any, any>) => {
