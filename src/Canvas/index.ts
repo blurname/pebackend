@@ -177,6 +177,28 @@ canvas.get('/get_spirits/?<canvas_id:int>').use(async(req) => {
 	})
 	return Response.json(spirits)
 })
+canvas.get(`/get_single_spirit/?<spirit_id:int>`).use(async(req)=>{
+  let singleSpirit = await pc.spirit.findMany({
+    where:{
+      id: req.query.spirit_id
+    }
+  })
+  return Response.json(singleSpirit)
+})
+canvas.get(`/get_single_point_container/?<canvas_id:int>&<canvas_spirit_id:int>`).use(async(req)=>{
+  // setTimeout(async () => {
+    console.log('look at me',req.query.canvas_id,req.query.canvas_spirit_id)
+    let pointContainer = await pc.spirit.findMany({
+      where:{
+        canvas_id:req.query.canvas_id,
+        canvas_spirit_id:req.query.canvas_spirit_id
+      }
+    })
+    console.log('hihihi',pointContainer)
+    return Response.json(pointContainer)
+  // }, 100);
+  
+})
 canvas.get('/get_is_having_spirits/?<canvas_id:int>').use(async (req) => {
 	let count = await pc.spirit.count({
 		where:{
